@@ -55,43 +55,30 @@ class WeatherViewController: UIViewController {
         locationManager.requestLocation()
         
     }
-    func getDayOfTheWeek(date: Date) -> Int {
+    func getdayOfTheWeek(currentDate: Date, datesAway: Int) -> Int {
         var component = DateComponents()
-        component.day = 1
+        component.day = datesAway
         
         var day = 0
-        let nextDate =  Calendar.current.date(byAdding: component, to: date)
+        let nextDate =  Calendar.current.date(byAdding: component, to: currentDate)
         day = Calendar.current.component(.weekday, from: nextDate ?? Date())
         return day - 1
     }
     
     @IBAction func segmentSwitched(_ sender: UISegmentedControl) {
         if self.weatherSegment.selectedSegmentIndex == 1 {
-                        
-            var component = DateComponents()
-                component.day = 1
-        
-            let firstDate = Calendar.current.date(byAdding: component, to: Date())
-            let firstDay = Calendar.current.component(.weekday, from: firstDate ?? Date())
-                    
-            let secondDate = Calendar.current.date(byAdding: component, to: firstDate ?? Date())
-            let secondDay = Calendar.current.component(.weekday, from: secondDate ?? Date())
-                    
-            let thirdDate = Calendar.current.date(byAdding: component, to: secondDate ?? Date())
-            let thirdDay = Calendar.current.component(.weekday, from: thirdDate ?? Date())
-                    
-            let fourthDate = Calendar.current.date(byAdding: component, to: thirdDate ?? Date())
-            let fourthDay = Calendar.current.component(.weekday, from: fourthDate ?? Date())
-                    
-            let fifthDate = Calendar.current.date(byAdding: component, to: fourthDate ?? Date())
-            let fifthDay = Calendar.current.component(.weekday, from: fifthDate ?? Date())
-                        
-                        
-    self.labelOne.text = self.dateFormatter.shortWeekdaySymbols[firstDay - 1]
-    self.labelTwo.text = self.dateFormatter.shortWeekdaySymbols[secondDay - 1]
-    self.labelThree.text = self.dateFormatter.shortWeekdaySymbols[thirdDay - 1]
-    self.labelFour.text = self.dateFormatter.shortWeekdaySymbols[fourthDay - 1]
-    self.labelFive.text = self.dateFormatter.shortWeekdaySymbols[fifthDay - 1]
+            
+        let firstDay = getdayOfTheWeek(currentDate: Date(), datesAway: 1)
+        let secondDay = getdayOfTheWeek(currentDate: Date(), datesAway: 2)
+        let thirdDay = getdayOfTheWeek(currentDate: Date(), datesAway: 3)
+        let fourthDay = getdayOfTheWeek(currentDate: Date(), datesAway: 4)
+        let fifthDay = getdayOfTheWeek(currentDate: Date(), datesAway: 5)
+            
+    self.labelOne.text = self.dateFormatter.shortWeekdaySymbols[firstDay]
+    self.labelTwo.text = self.dateFormatter.shortWeekdaySymbols[secondDay]
+    self.labelThree.text = self.dateFormatter.shortWeekdaySymbols[thirdDay]
+    self.labelFour.text = self.dateFormatter.shortWeekdaySymbols[fourthDay]
+    self.labelFive.text = self.dateFormatter.shortWeekdaySymbols[fifthDay]
         }
     }
 }

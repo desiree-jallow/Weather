@@ -42,7 +42,6 @@ class WeatherViewController: UIViewController {
     let locationManager = CLLocationManager()
     let dateFormatter = DateFormatter()
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -75,7 +74,6 @@ class WeatherViewController: UIViewController {
         
         var minComponent = Calendar.current.dateComponents([.minute], from: later)
         minComponent.minute = 0
-        
         
         dateFormatter.dateStyle = .none
         dateFormatter.dateFormat = "h:00"
@@ -117,6 +115,7 @@ class WeatherViewController: UIViewController {
         switch sender.selectedSegmentIndex {
         case 0:
             updateHourlyView()
+            
         default:
             updateDailyView()
         }
@@ -136,7 +135,7 @@ extension WeatherViewController: WeatherManagerDelegate {
             self.conditionLabel.text = weather.description
         
             //weather condition picture does not work with segment
-            switch self.weatherSegment.selectedSegmentIndex {
+        switch self.weatherSegment.selectedSegmentIndex {
             case 1:
                 self.conditionImageOne.image = UIImage(systemName: weather.dailyArray[0].conditionName)
                 self.conditionImageTwo.image = UIImage(systemName: weather.dailyArray[1].conditionName)

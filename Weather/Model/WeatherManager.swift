@@ -6,7 +6,7 @@
 //  Copyright © 2020 Desiree. All rights reserved.
 //
 
-import Foundation
+import UIKit
 //fetch data
 protocol WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
@@ -28,8 +28,6 @@ struct WeatherManager {
            performRequest(with: urlString)
                   
        }
-                
-
     
     func performRequest(with urlString: String) {
         //Create a url
@@ -87,20 +85,20 @@ struct WeatherManager {
             let fifthHourly = HourlyModel(conditionID: fifthID, temp: fifthTemp)
             let hourlyArray: [HourlyModel] = [firstHourly, secondHourly, thirdHourly, fourthHourly, fifthHourly]
             
-            let firstDayID = decodedData.hourly[0].weather[0].id
-            let firstDayTemp = decodedData.hourly[0].temp
+            let firstDayID = decodedData.daily[0].weather[0].id
+            let firstDayTemp = decodedData.daily[0].temp.day
             
-            let secondDayID = decodedData.hourly[1].weather[0].id
-            let secondDayTemp = decodedData.hourly[1].temp
+            let secondDayID = decodedData.daily[1].weather[0].id
+            let secondDayTemp = decodedData.daily[1].temp.day
             
-            let thirdDayID = decodedData.hourly[2].weather[0].id
-            let thirdDayTemp = decodedData.hourly[2].temp
+            let thirdDayID = decodedData.daily[2].weather[0].id
+            let thirdDayTemp = decodedData.daily[2].temp.day
             
-            let fourthDayID = decodedData.hourly[3].weather[0].id
-            let fourthDayTemp = decodedData.hourly[4].temp
+            let fourthDayID = decodedData.daily[3].weather[0].id
+            let fourthDayTemp = decodedData.daily[3].temp.day
             
-            let fifthDayID = decodedData.hourly[3].weather[0].id
-            let fifthDayTemp = decodedData.hourly[3].temp
+            let fifthDayID = decodedData.daily[4].weather[0].id
+            let fifthDayTemp = decodedData.daily[4].temp.day
             
             let firstDay = DailyModel(conditionID: firstDayID, temp: firstDayTemp)
             let secondDay = DailyModel(conditionID: secondDayID, temp: secondDayTemp)
@@ -110,7 +108,7 @@ struct WeatherManager {
             
             let dailyArray: [DailyModel] = [firstDay, secondDay, thirdDay, fourthDay, fifthDay]
             
-            let weather = WeatherModel(conditionId: id, currentTemp: currentTemp, hourlyArray: hourlyArray, dailyArray: dailyArray, description: description)
+            let weather = WeatherModel(conditionID: id, currentTemp: currentTemp, hourlyArray: hourlyArray, dailyArray: dailyArray, description: description)
             return weather
         } catch {
             delegate?.didFailWithError(error: error)

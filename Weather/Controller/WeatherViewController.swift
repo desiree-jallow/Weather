@@ -32,54 +32,33 @@ class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         WeatherManager.instance.delegate = self
         locationManager.delegate = self
         myCollectionView.dataSource = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-        
     }
+    
     @IBAction func segmentSwitched(_ sender: UISegmentedControl) {
         myCollectionView.reloadData()
         isShowingHourly.toggle()
-        
     }
-    
-    func getdayOfTheWeek(datesAway: Int) -> Int {
-        var component = DateComponents()
-        component.day = datesAway
-        
-        var day = 0
-        let nextDate =  Calendar.current.date(byAdding: component, to: Date())
-        day = Calendar.current.component(.weekday, from: nextDate ?? Date())
-        return day - 1
-    }
-    
-    func getHours(hoursAway: Int) -> String {
-        
-        let later = Calendar.current.date(byAdding: .hour, value: hoursAway, to: Date()) ?? Date()
-        
-        var minComponent = Calendar.current.dateComponents([.minute], from: later)
-        minComponent.minute = 0
-        
-        dateFormatter.dateStyle = .none
-        dateFormatter.dateFormat = "h:00"
-        
-        return dateFormatter.string(from: later)
-    }
-    
 }
 
 //MARK: - UICollectionViewDelegateFlowLayout
 extension WeatherViewController: UICollectionViewDelegateFlowLayout {
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        
+        let width = ((collectionView.frame.width) / 10)
+        return CGSize(width: width, height: 200)
+    }
     
 }
 
 
 //MARK: - WeatherManagerDelegate
 extension WeatherViewController: WeatherManagerDelegate {
-    
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         self.myWeather = weather
@@ -91,7 +70,7 @@ extension WeatherViewController: WeatherManagerDelegate {
             self.dateFormatter.dateStyle = .long
             self.dateLabel.text = self.dateFormatter.string(from: Date())
             self.temperatureLabel.text = weather.currentTempString
-            self.conditionImage.image = UIImage(systemName: weather.conditionName)
+            self.conditionImage.image = UIImage(named: weather.conditionName)
             self.conditionLabel.text = weather.description
         }
         

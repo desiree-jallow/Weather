@@ -7,13 +7,12 @@
 //
 
 import Foundation
-//fetch data
+
+
 protocol WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
     
-    
     func didFailWithError(error: Error)
-    
 }
 
 struct WeatherManager {
@@ -25,7 +24,6 @@ struct WeatherManager {
     
     var weather: WeatherModel?
         
-    
    static var instance = WeatherManager()
     
     func fetchCurrentWeather(latitude: Double, longitude: Double) {

@@ -22,19 +22,19 @@ struct WeatherModel {
     var conditionName: String {
         switch conditionID {
            case 200...232:
-               return "cloud.bolt.rain"
+               return "stormy"
            case 300...321:
-               return "cloud.drizzle"
+               return "drizzle"
            case 500...531:
-               return "cloud.rain"
+               return "rain"
            case 600...622:
                return "snow"
            case 701...781:
-               return "cloud.fog"
+               return "fog"
            case 800:
-               return "sun.min"
+               return "sunny"
            default:
-               return "cloud"
+               return "cloudy"
            }
         }
     
@@ -50,19 +50,19 @@ struct HourlyModel {
     var conditionName: String {
            switch conditionID {
               case 200...232:
-                  return "cloud.bolt.rain"
+                  return "stormy"
               case 300...321:
-                  return "cloud.drizzle"
+                  return "drizzle"
               case 500...531:
-                  return "cloud.rain"
+                  return "rain"
               case 600...622:
                   return "snow"
               case 701...781:
-                  return "cloud.fog"
+                  return "fog"
               case 800:
-                  return "sun.min"
+                  return "sunny"
               default:
-                  return "cloud"
+                  return "cloudy"
         }
     }
     
@@ -77,19 +77,19 @@ struct DailyModel {
     var conditionName: String {
            switch conditionID {
               case 200...232:
-                  return "cloud.bolt.rain"
+                  return "stormy"
               case 300...321:
-                  return "cloud.drizzle"
+                  return "drizzle"
               case 500...531:
-                  return "cloud.rain"
+                  return "rain"
               case 600...622:
                   return "snow"
               case 701...781:
-                  return "cloud.fog"
+                  return "fog"
               case 800:
-                  return "sun.min"
+                  return "sunny"
               default:
-                  return "cloud"
+                  return "cloudy"
         }
     }
 }

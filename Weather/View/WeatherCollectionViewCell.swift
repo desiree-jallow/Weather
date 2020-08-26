@@ -18,15 +18,13 @@ class WeatherCollectionViewCell: UICollectionViewCell {
     
     func getHours() -> [String] {
         var hoursArray = [String]()
+        
         for int in 1...5 {
         
         let later = Calendar.current.date(byAdding: .hour, value: int, to: Date()) ?? Date()
             
-        var minComponent = Calendar.current.dateComponents([.minute], from: later)
-        minComponent.minute = 0
-            
             dateFormatter.dateStyle = .none
-            dateFormatter.dateFormat = "h:00"
+            dateFormatter.dateFormat = "h a"
             
             hoursArray.append(dateFormatter.string(from: later))
             
@@ -55,13 +53,13 @@ class WeatherCollectionViewCell: UICollectionViewCell {
     
             self.titleLabel.text = self.getHours()[index]
             self.tempLabel.text = WeatherManager.instance.weather?.hourlyArray[index].tempString
-            self.conditionImage.image = UIImage(systemName: (WeatherManager.instance.weather?.hourlyArray[index].conditionName) ?? "")
+            self.conditionImage.image = UIImage(named: (WeatherManager.instance.weather?.hourlyArray[index].conditionName) ?? "")
     }
     
     
     func updateDailyViews(index: Int) {
           titleLabel.text = dateFormatter.shortWeekdaySymbols[getdayOfTheWeek()[index]]
         tempLabel.text = WeatherManager.instance.weather?.dailyArray[index].tempString
-        conditionImage.image = UIImage(systemName: (WeatherManager.instance.weather?.dailyArray[index].conditionName) ?? "")
+        conditionImage.image = UIImage(named: (WeatherManager.instance.weather?.dailyArray[index].conditionName) ?? "")
       }
 }

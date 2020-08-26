@@ -19,7 +19,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var conditionLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var conditionImage: UIImageView!
-        
+    
     @IBOutlet weak var weatherSegment: UISegmentedControl!
     
     let locationManager = CLLocationManager()
@@ -32,13 +32,10 @@ class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-    
+        
         WeatherManager.instance.delegate = self
         locationManager.delegate = self
         myCollectionView.dataSource = self
-        myCollectionView.delegate = self
-        myCollectionView.reloadData()
-        
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         
@@ -74,24 +71,28 @@ class WeatherViewController: UIViewController {
     
 }
 
+//MARK: - UICollectionViewDelegateFlowLayout
+extension WeatherViewController: UICollectionViewDelegateFlowLayout {
+    
+}
+
 
 //MARK: - WeatherManagerDelegate
 extension WeatherViewController: WeatherManagerDelegate {
     
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-            self.myWeather = weather
-           
+        self.myWeather = weather
+        
         DispatchQueue.main.async {
             self.myCollectionView.reloadData()
-        
+            
             //weather condition current
             self.dateFormatter.dateStyle = .long
             self.dateLabel.text = self.dateFormatter.string(from: Date())
             self.temperatureLabel.text = weather.currentTempString
             self.conditionImage.image = UIImage(systemName: weather.conditionName)
             self.conditionLabel.text = weather.description
-            
         }
         
     }
@@ -101,13 +102,9 @@ extension WeatherViewController: WeatherManagerDelegate {
     }
 }
 
-extension WeatherViewController: UICollectionViewDelegate {
-    
-}
 
+//MARK: - UICollectionViewDataSource
 extension WeatherViewController: UICollectionViewDataSource {
-    
-    
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -116,31 +113,19 @@ extension WeatherViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         return 5
-        
     }
-
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = myCollectionView.dequeueReusableCell(withReuseIdentifier: "weatherCell", for: indexPath) as? WeatherCollectionViewCell
         
-
-        if isShowingHourly {
-           
-            cell?.updateHourlyViews(index: indexPath.row)
-            
-            
-        } else {
-            
-            cell?.updateDailyViews(index: indexPath.row)
-           
-            
-        }
         
+        if isShowingHourly {
+            cell?.updateHourlyViews(index: indexPath.row)
+        } else {
+            cell?.updateDailyViews(index: indexPath.row)
+        }
         return cell ?? UICollectionViewCell()
-       
     }
-    
-    
 }
 
 

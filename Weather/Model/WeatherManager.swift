@@ -6,12 +6,14 @@
 //  Copyright © 2020 Desiree. All rights reserved.
 //
 
-import UIKit
+import Foundation
 //fetch data
 protocol WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
-   
+    
+    
     func didFailWithError(error: Error)
+    
 }
 
 struct WeatherManager {
@@ -21,6 +23,10 @@ struct WeatherManager {
     
     var delegate: WeatherManagerDelegate?
     
+    var weather: WeatherModel?
+        
+    
+   static var instance = WeatherManager()
     
     func fetchCurrentWeather(latitude: Double, longitude: Double) {
               
@@ -29,7 +35,10 @@ struct WeatherManager {
                   
        }
     
+    
     func performRequest(with urlString: String) {
+        DispatchQueue.main.async {
+        
         //Create a url
         if let url = URL(string: urlString) {
             //create url session
@@ -42,15 +51,20 @@ struct WeatherManager {
                 }
                 
                 if let safeData = data {
-                    if let weather = self.parseJSON(safeData) {
-                        self.delegate?.didUpdateWeather(self, weather: weather)
+                    if let myDataWeather = self.parseJSON(safeData) {
+                        
+                        self.delegate?.didUpdateWeather(self, weather: myDataWeather)
+                        WeatherManager.instance.weather = myDataWeather
+                        
+                        }
                     }
-                    
                 }
+                 task.resume()
             }
-            //start task
-            task.resume()
+          
+           
         }
+        
     }
     
     
@@ -109,6 +123,7 @@ struct WeatherManager {
             let dailyArray: [DailyModel] = [firstDay, secondDay, thirdDay, fourthDay, fifthDay]
             
             let weather = WeatherModel(conditionID: id, currentTemp: currentTemp, hourlyArray: hourlyArray, dailyArray: dailyArray, description: description)
+            
             return weather
         } catch {
             delegate?.didFailWithError(error: error)

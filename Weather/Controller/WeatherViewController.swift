@@ -9,52 +9,43 @@
 import UIKit
 import CoreLocation
 
+
 class WeatherViewController: UIViewController {
     
+    @IBOutlet weak var myCollectionView: UICollectionView!
     
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var conditionLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var conditionImage: UIImageView!
-    
-    @IBOutlet weak var labelOne: UILabel!
-    @IBOutlet weak var labelTwo: UILabel!
-    @IBOutlet weak var labelThree: UILabel!
-    @IBOutlet weak var labelFour: UILabel!
-    @IBOutlet weak var labelFive: UILabel!
-    
-    @IBOutlet weak var conditionImageOne: UIImageView!
-    @IBOutlet weak var conditionImageTwo: UIImageView!
-    @IBOutlet weak var conditionImageThree: UIImageView!
-    @IBOutlet weak var conditionImageFour: UIImageView!
-    @IBOutlet weak var conditionImageFive: UIImageView!
-    
-    @IBOutlet weak var tempOne: UILabel!
-    @IBOutlet weak var tempTwo: UILabel!
-    @IBOutlet weak var tempThree: UILabel!
-    @IBOutlet weak var tempFour: UILabel!
-    @IBOutlet weak var tempFive: UILabel!
-    
+        
     @IBOutlet weak var weatherSegment: UISegmentedControl!
     
-    var weatherManager = WeatherManager()
     let locationManager = CLLocationManager()
     let dateFormatter = DateFormatter()
+    
+    var isShowingHourly = true
+    
+    var myWeather: WeatherModel?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        updateHourlyView()
-        
-        dateFormatter.dateStyle = .long
-        dateLabel.text = dateFormatter.string(from: Date())
-        
-        weatherManager.delegate = self
+    
+        WeatherManager.instance.delegate = self
         locationManager.delegate = self
+        myCollectionView.dataSource = self
+        myCollectionView.delegate = self
+        myCollectionView.reloadData()
         
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
+        
+    }
+    @IBAction func segmentSwitched(_ sender: UISegmentedControl) {
+        myCollectionView.reloadData()
+        isShowingHourly.toggle()
         
     }
     
@@ -77,102 +68,81 @@ class WeatherViewController: UIViewController {
         
         dateFormatter.dateStyle = .none
         dateFormatter.dateFormat = "h:00"
-
+        
         return dateFormatter.string(from: later)
     }
     
-    func updateHourlyView() {
-        let firstHour = getHours(hoursAway: 1)
-        let secondHour = getHours(hoursAway: 2)
-        let thirdHour = getHours(hoursAway: 3)
-        let fourthHour = getHours(hoursAway: 4)
-        let fifthHour = getHours(hoursAway: 5)
-                 
-        self.labelOne.text = firstHour
-        self.labelTwo.text = secondHour
-        self.labelThree.text = thirdHour
-        self.labelFour.text = fourthHour
-        self.labelFive.text = fifthHour
-    }
-    
-    func updateDailyView() {
-        let firstDay = getdayOfTheWeek(datesAway: 1)
-        let secondDay = getdayOfTheWeek(datesAway: 2)
-        let thirdDay = getdayOfTheWeek(datesAway: 3)
-        let fourthDay = getdayOfTheWeek(datesAway: 4)
-        let fifthDay = getdayOfTheWeek(datesAway: 5)
-                 
-        self.labelOne.text =
-            self.dateFormatter.shortWeekdaySymbols[firstDay]
-        self.labelTwo.text = self.dateFormatter.shortWeekdaySymbols[secondDay]
-        self.labelThree.text = self.dateFormatter.shortWeekdaySymbols[thirdDay]
-        self.labelFour.text = self.dateFormatter.shortWeekdaySymbols[fourthDay]
-        self.labelFive.text = self.dateFormatter.shortWeekdaySymbols[fifthDay]
-    }
-    
-    @IBAction func segmentSwitched(_ sender: UISegmentedControl) {
-        
-        switch sender.selectedSegmentIndex {
-        case 0:
-            updateHourlyView()
-            
-        default:
-            updateDailyView()
-        }
-        
-    }
 }
+
 
 //MARK: - WeatherManagerDelegate
 extension WeatherViewController: WeatherManagerDelegate {
     
+    
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-        
+            self.myWeather = weather
+           
         DispatchQueue.main.async {
+            self.myCollectionView.reloadData()
+        
             //weather condition current
+            self.dateFormatter.dateStyle = .long
+            self.dateLabel.text = self.dateFormatter.string(from: Date())
             self.temperatureLabel.text = weather.currentTempString
             self.conditionImage.image = UIImage(systemName: weather.conditionName)
             self.conditionLabel.text = weather.description
-        
-            //weather condition picture does not work with segment
-        switch self.weatherSegment.selectedSegmentIndex {
-            case 1:
-                self.conditionImageOne.image = UIImage(systemName: weather.dailyArray[0].conditionName)
-                self.conditionImageTwo.image = UIImage(systemName: weather.dailyArray[1].conditionName)
-                self.conditionImageThree.image = UIImage(systemName: weather.dailyArray[2].conditionName)
-                self.conditionImageFour.image = UIImage(systemName: weather.dailyArray[3].conditionName)
-                self.conditionImageFive.image = UIImage(systemName: weather.dailyArray[4].conditionName)
-            default:
-                self.conditionImageOne.image = UIImage(systemName: weather.hourlyArray[0].conditionName)
-                self.conditionImageTwo.image = UIImage(systemName: weather.hourlyArray[1].conditionName)
-                self.conditionImageThree.image = UIImage(systemName: weather.hourlyArray[2].conditionName)
-                self.conditionImageFour.image = UIImage(systemName: weather.hourlyArray[3].conditionName)
-                self.conditionImageFive.image = UIImage(systemName: weather.hourlyArray[4].conditionName)
-                }
             
-            //weather condititon temp does not work with segment control
-        switch self.weatherSegment.selectedSegmentIndex {
-        case 1:
-            self.tempOne.text = weather.hourlyArray[0].tempString
-            self.tempTwo.text = weather.hourlyArray[1].tempString
-            self.tempThree.text = weather.hourlyArray[2].tempString
-            self.tempFour.text = weather.hourlyArray[3].tempString
-            self.tempFive.text = weather.hourlyArray[4].tempString
-        default:
-            self.tempOne.text = weather.dailyArray[0].tempString
-            self.tempTwo.text = weather.dailyArray[1].tempString
-            self.tempThree.text = weather.dailyArray[2].tempString
-            self.tempFour.text = weather.dailyArray[3].tempString
-            self.tempFive.text = weather.dailyArray[4].tempString
         }
+        
     }
-    
-}
     
     func didFailWithError(error: Error) {
         print(error)
     }
 }
+
+extension WeatherViewController: UICollectionViewDelegate {
+    
+}
+
+extension WeatherViewController: UICollectionViewDataSource {
+    
+    
+    
+    func numberOfSections(in collectionView: UICollectionView) -> Int {
+        return 1
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        return 5
+        
+    }
+
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = myCollectionView.dequeueReusableCell(withReuseIdentifier: "weatherCell", for: indexPath) as? WeatherCollectionViewCell
+        
+
+        if isShowingHourly {
+           
+            cell?.updateHourlyViews(index: indexPath.row)
+            
+            
+        } else {
+            
+            cell?.updateDailyViews(index: indexPath.row)
+           
+            
+        }
+        
+        return cell ?? UICollectionViewCell()
+       
+    }
+    
+    
+}
+
 
 //MARK: - CLLocationManagerDelegate
 extension WeatherViewController: CLLocationManagerDelegate {
@@ -182,7 +152,7 @@ extension WeatherViewController: CLLocationManagerDelegate {
             let lat = location.coordinate.latitude
             let lon = location.coordinate.longitude
             
-            weatherManager.fetchCurrentWeather(latitude: lat, longitude: lon)
+            WeatherManager.instance.fetchCurrentWeather(latitude: lat, longitude: lon)
             
             func fetchCity(from location: CLLocation, completion: @escaping (_ city: String?, _ error: Error?) -> ()) {CLGeocoder().reverseGeocodeLocation(location) { placemarks, error in completion(placemarks?.first?.locality, error)
                 }

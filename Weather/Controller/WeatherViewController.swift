@@ -32,48 +32,78 @@ class WeatherViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        WeatherManager.instance.delegate = self
-        locationManager.delegate = self
-        myCollectionView.dataSource = self
-        locationManager.requestWhenInUseAuthorization()
-        locationManager.requestLocation()
+        setUpInitialView()
     }
     
+    //toggle hourly and daily views
     @IBAction func segmentSwitched(_ sender: UISegmentedControl) {
         myCollectionView.reloadData()
         isShowingHourly.toggle()
     }
 }
 
+extension WeatherViewController {
+    //sets up initial views
+    func setUpInitialView() {
+        WeatherManager.instance.delegate = self
+        locationManager.delegate = self
+        myCollectionView.dataSource = self
+        locationManager.requestWhenInUseAuthorization()
+        locationManager.requestLocation()
+        myCollectionView.reloadData()
+        hideView()
+    }
+    //hides views until API call is complete
+    func hideView() {
+        dateLabel.isHidden = true
+        myCollectionView.isHidden = true
+        cityLabel.isHidden = true
+        conditionLabel.isHidden = true
+        temperatureLabel.isHidden = true
+        weatherSegment.isHidden = true
+        conditionImage.isHidden = true
+    }
+    //shows view when API call is complete
+    func showView() {
+        dateLabel.isHidden = false
+        myCollectionView.isHidden = false
+        cityLabel.isHidden = false
+        conditionLabel.isHidden = false
+        temperatureLabel.isHidden = false
+        weatherSegment.isHidden = false
+        conditionImage.isHidden = false
+    }
+}
+
 //MARK: - UICollectionViewDelegateFlowLayout
 extension WeatherViewController: UICollectionViewDelegateFlowLayout {
-    
+    //set size of collection view
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
         let width = ((collectionView.frame.width) / 10)
         return CGSize(width: width, height: 200)
     }
-    
 }
-
 
 //MARK: - WeatherManagerDelegate
 extension WeatherViewController: WeatherManagerDelegate {
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
-        self.myWeather = weather
         
-        DispatchQueue.main.async {
-            self.myCollectionView.reloadData()
+        DispatchQueue.main.async { [self] in
+            myWeather = weather
+            
+            myCollectionView.reloadData()
             
             //weather condition current
-            self.dateFormatter.dateStyle = .long
-            self.dateLabel.text = self.dateFormatter.string(from: Date())
-            self.temperatureLabel.text = weather.currentTempString
-            self.conditionImage.image = UIImage(named: weather.conditionName)
-            self.conditionLabel.text = weather.description
+            dateFormatter.dateStyle = .long
+            dateLabel.text = self.dateFormatter.string(from: Date())
+            temperatureLabel.text = weather.currentTempString
+            conditionImage.image = UIImage(named: weather.conditionName)
+            conditionLabel.text = weather.description.capitalized
+            
+            showView()
         }
-        
     }
     
     func didFailWithError(error: Error) {
@@ -81,32 +111,25 @@ extension WeatherViewController: WeatherManagerDelegate {
     }
 }
 
-
 //MARK: - UICollectionViewDataSource
 extension WeatherViewController: UICollectionViewDataSource {
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
-        return 5
+            return 5
     }
     
+    //show view based on what isShowHourly variable is set to
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = myCollectionView.dequeueReusableCell(withReuseIdentifier: "weatherCell", for: indexPath) as? WeatherCollectionViewCell
-        
+        let cell = myCollectionView.dequeueReusableCell(withReuseIdentifier: "weatherCell", for: indexPath) as! WeatherCollectionViewCell
         
         if isShowingHourly {
-            cell?.updateHourlyViews(index: indexPath.row)
+                cell.updateHourlyViews(index: indexPath.row)
         } else {
-            cell?.updateDailyViews(index: indexPath.row)
+                cell.updateDailyViews(index: indexPath.row)
         }
-        return cell ?? UICollectionViewCell()
+        return cell
     }
 }
-
 
 //MARK: - CLLocationManagerDelegate
 extension WeatherViewController: CLLocationManagerDelegate {
@@ -123,10 +146,10 @@ extension WeatherViewController: CLLocationManagerDelegate {
             }
             
             guard let location: CLLocation = manager.location else { return }
+            
             fetchCity(from: location) { city, error in
                 guard let city = city, error == nil else { return }
                 self.cityLabel.text = city
-                
             }
         }
     }
@@ -134,8 +157,6 @@ extension WeatherViewController: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         print(error)
     }
-    
-    
 }
 
 

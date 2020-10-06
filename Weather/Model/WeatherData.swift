@@ -21,7 +21,6 @@ struct Current: Codable {
     let weather: [Weather]
 }
 
-
 struct Hourly: Codable {
     let temp: Double
     let weather: [Weather]

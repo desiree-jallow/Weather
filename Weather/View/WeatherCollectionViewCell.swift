@@ -14,8 +14,7 @@ class WeatherCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var conditionImage: UIImageView!
     
     let dateFormatter = DateFormatter()
-    
-    
+    //get hours for hours label
     func getHours() -> [String] {
         var hoursArray = [String]()
         
@@ -27,15 +26,14 @@ class WeatherCollectionViewCell: UICollectionViewCell {
             dateFormatter.dateFormat = "h a"
             
             hoursArray.append(dateFormatter.string(from: later))
-            
         }
+        
         return hoursArray
     }
-    
+    //get days of the week for label
     func getdayOfTheWeek() -> [Int] {
-            var daysArray = [Int]()
-            
-           var day = 0
+        var daysArray = [Int]()
+        var day = 0
         
         for int in 1...5 {
             var component = DateComponents()
@@ -48,18 +46,28 @@ class WeatherCollectionViewCell: UICollectionViewCell {
            
            return daysArray
        }
-    
+    //update views for houly
     func updateHourlyViews(index: Int) {
-    
-            self.titleLabel.text = self.getHours()[index]
-            self.tempLabel.text = WeatherManager.instance.weather?.hourlyArray[index].tempString
-            self.conditionImage.image = UIImage(named: (WeatherManager.instance.weather?.hourlyArray[index].conditionName) ?? "")
+        DispatchQueue.main.async { [self] in
+            if let weather = WeatherManager.instance.weather {
+        
+                titleLabel.text = getHours()[index]
+                tempLabel.text = WeatherManager.instance.weather?.hourlyArray[index].tempString
+                conditionImage.image = UIImage(named: weather.hourlyArray[index].conditionName)
+        }
     }
+}
     
-    
+    //update views for daily
     func updateDailyViews(index: Int) {
-          titleLabel.text = dateFormatter.shortWeekdaySymbols[getdayOfTheWeek()[index]]
-        tempLabel.text = WeatherManager.instance.weather?.dailyArray[index].tempString
-        conditionImage.image = UIImage(named: (WeatherManager.instance.weather?.dailyArray[index].conditionName) ?? "")
-      }
+        
+        DispatchQueue.main.async { [self] in
+            if let weather = WeatherManager.instance.weather {
+                
+                titleLabel.text = dateFormatter.shortWeekdaySymbols[getdayOfTheWeek()[index]]
+                tempLabel.text = WeatherManager.instance.weather?.dailyArray[index].tempString
+                conditionImage.image = UIImage(named: weather.dailyArray[index].conditionName)
+          }
+        }
+    }
 }

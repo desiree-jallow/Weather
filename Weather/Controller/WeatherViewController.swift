@@ -45,6 +45,7 @@ class WeatherViewController: UIViewController {
 extension WeatherViewController {
     //sets up initial views
     func setUpInitialView() {
+        myCollectionView.reloadData()
         WeatherManager.instance.delegate = self
         locationManager.delegate = self
         myCollectionView.dataSource = self
@@ -52,7 +53,7 @@ extension WeatherViewController {
         locationManager.requestLocation()
         myCollectionView.reloadData()
     }
-   
+    
     //shows view when API call is complete
     func showView() {
         dateLabel.isHidden = false

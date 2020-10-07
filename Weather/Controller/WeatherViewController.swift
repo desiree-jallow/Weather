@@ -51,18 +51,8 @@ extension WeatherViewController {
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
         myCollectionView.reloadData()
-        hideView()
     }
-    //hides views until API call is complete
-    func hideView() {
-        dateLabel.isHidden = true
-        myCollectionView.isHidden = true
-        cityLabel.isHidden = true
-        conditionLabel.isHidden = true
-        temperatureLabel.isHidden = true
-        weatherSegment.isHidden = true
-        conditionImage.isHidden = true
-    }
+   
     //shows view when API call is complete
     func showView() {
         dateLabel.isHidden = false

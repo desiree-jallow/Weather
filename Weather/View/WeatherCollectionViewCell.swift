@@ -48,26 +48,22 @@ class WeatherCollectionViewCell: UICollectionViewCell {
        }
     //update views for houly
     func updateHourlyViews(index: Int) {
-        DispatchQueue.main.async { [self] in
             if let weather = WeatherManager.instance.weather {
         
                 titleLabel.text = getHours()[index]
                 tempLabel.text = WeatherManager.instance.weather?.hourlyArray[index].tempString
                 conditionImage.image = UIImage(named: weather.hourlyArray[index].conditionName)
         }
-    }
 }
     
     //update views for daily
     func updateDailyViews(index: Int) {
         
-        DispatchQueue.main.async { [self] in
             if let weather = WeatherManager.instance.weather {
                 
                 titleLabel.text = dateFormatter.shortWeekdaySymbols[getdayOfTheWeek()[index]]
                 tempLabel.text = WeatherManager.instance.weather?.dailyArray[index].tempString
                 conditionImage.image = UIImage(named: weather.dailyArray[index].conditionName)
           }
-        }
     }
 }

@@ -81,7 +81,6 @@ extension WeatherViewController: WeatherManagerDelegate {
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         
-        DispatchQueue.main.async { [self] in
             myWeather = weather
             
             myCollectionView.reloadData()
@@ -94,7 +93,7 @@ extension WeatherViewController: WeatherManagerDelegate {
             conditionLabel.text = weather.description.capitalized
             
             showView()
-        }
+        
     }
     
     func didFailWithError(error: Error) {

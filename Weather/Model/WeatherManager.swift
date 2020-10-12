@@ -46,14 +46,16 @@ struct WeatherManager {
                 //parse data
                 if let safeData = data {
                     if let myDataWeather = self.parseJSON(safeData) {
-                        self.delegate?.didUpdateWeather(self, weather: myDataWeather)
-                            WeatherManager.instance.weather = myDataWeather
-                        }
+                        DispatchQueue.main.async {
+                            self.delegate?.didUpdateWeather(self, weather: myDataWeather)
+                                WeatherManager.instance.weather = myDataWeather
                     }
                 }
-                 task.resume()
+            }
         }
+        task.resume()
     }
+}
     
     //parse data and set up weather model
     func parseJSON(_ weatherData: Data) -> WeatherModel? {

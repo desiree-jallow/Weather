@@ -19,6 +19,7 @@ class WeatherViewController: UIViewController {
     @IBOutlet weak var conditionLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var conditionImage: UIImageView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var weatherSegment: UISegmentedControl!
     
@@ -45,13 +46,13 @@ class WeatherViewController: UIViewController {
 extension WeatherViewController {
     //sets up initial views
     func setUpInitialView() {
-        myCollectionView.reloadData()
         WeatherManager.instance.delegate = self
         locationManager.delegate = self
         myCollectionView.dataSource = self
         locationManager.requestWhenInUseAuthorization()
         locationManager.requestLocation()
-        myCollectionView.reloadData()
+        
+        activityIndicator.startAnimating()
     }
     
     //shows view when API call is complete
@@ -63,6 +64,8 @@ extension WeatherViewController {
         temperatureLabel.isHidden = false
         weatherSegment.isHidden = false
         conditionImage.isHidden = false
+        activityIndicator.stopAnimating()
+        
     }
 }
 
@@ -84,6 +87,8 @@ extension WeatherViewController: WeatherManagerDelegate {
             myWeather = weather
             
             myCollectionView.reloadData()
+        
+            showView()
             
             //weather condition current
             dateFormatter.dateStyle = .long
@@ -91,8 +96,6 @@ extension WeatherViewController: WeatherManagerDelegate {
             temperatureLabel.text = weather.currentTempString
             conditionImage.image = UIImage(named: weather.conditionName)
             conditionLabel.text = weather.description.capitalized
-            
-            showView()
         
     }
     

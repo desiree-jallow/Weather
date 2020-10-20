@@ -85,12 +85,11 @@ extension WeatherViewController: WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         
             myWeather = weather
-        OperationQueue.main.addOperation {
-            self.myCollectionView.reloadData()
+        OperationQueue.main.addOperation { [self] in
+            myCollectionView.reloadData()
+            showView()
         }
             
-        
-            showView()
             
             //weather condition current
             dateFormatter.dateStyle = .long

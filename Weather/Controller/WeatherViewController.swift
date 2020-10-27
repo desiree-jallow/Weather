@@ -85,10 +85,11 @@ extension WeatherViewController: WeatherManagerDelegate {
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel) {
         
             myWeather = weather
-        OperationQueue.main.addOperation { [self] in
-            myCollectionView.reloadData()
-            showView()
+        DispatchQueue.main.async {
+            self.myCollectionView.reloadData()
         }
+            showView()
+        
             
             
             //weather condition current
@@ -139,7 +140,7 @@ extension WeatherViewController: CLLocationManagerDelegate {
                 }
             }
             
-            guard let location: CLLocation = manager.location else { return }
+        guard let location: CLLocation = manager.location else { return }
             
             fetchCity(from: location) { city, error in
                 guard let city = city, error == nil else { return }
